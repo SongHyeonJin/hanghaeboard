@@ -23,11 +23,11 @@ public class Comment extends Timestamped{
     @Column(nullable = false)
     private String contents;
 
-    @ManyToOne
-    @JoinColumn(name = "parentId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
     private Comment parent;
 
-    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Comment> children = new ArrayList<>();
 
     @Column(nullable = false)

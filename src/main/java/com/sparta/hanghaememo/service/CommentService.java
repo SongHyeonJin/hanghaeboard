@@ -28,17 +28,17 @@ public class CommentService {
 
 
     @Transactional
-    public ResponseEntity createComment(CommentRequestDto requestDto, Users user){
-        Board board = existBoard(requestDto.getBoard_id());
-        Comment comment = new Comment(requestDto);
+    public ResponseEntity createComment(CommentRequestDto commentRequestDto, Users user){
+        Board board = existBoard(commentRequestDto.getBoard_id());
+        Comment comment = new Comment(commentRequestDto);
 
         Comment parentComment = null;
         //자식댓글 경우
-        if(requestDto.getParen_Id() != null) {
+        if(commentRequestDto.getParent_id() != null) {
             // 대댓글 부모 댓글 존재여부 확인
-            parentComment = existComment(requestDto.getParen_Id());
+            parentComment = existComment(commentRequestDto.getParent_id());
             // 부모댓글의 게시글 번호와 자식댓글의 게시글 번호 같은지 체크하기
-            if (parentComment.getBoard().getId() != requestDto.getBoard_id()) {
+            if (parentComment.getBoard().getId() != commentRequestDto.getBoard_id()) {
                 throw new CustomException(ErrorCode.NO_SAME_COMMENT_ID);
             }
         }
@@ -52,7 +52,6 @@ public class CommentService {
                 log.info("-------------parentCommentId : "+comment.getParent().getId());
             }else{
                 comment.updateParent(null);
-                log.info("==============parentCommentId : "+comment.getParent().getId());
             }
             
 //            List<Comment> commentList = board.getCommentList();
