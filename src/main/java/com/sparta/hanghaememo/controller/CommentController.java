@@ -34,4 +34,12 @@ public class CommentController {
         return commentService.deleteComment(id, userDetails.getUser());
     }
 
+    @PostMapping("/api/boards/{boardId}/comments/{commentId}/like")
+    public ResponseEntity updatecommentLike(
+            @PathVariable Long boardId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return commentService.updateCommentLike(boardId, commentId, userDetails.getUser());
+    }
+
 }

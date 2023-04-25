@@ -5,6 +5,7 @@ import com.sparta.hanghaememo.dto.board.BoardRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
 
@@ -32,6 +33,10 @@ public class Board extends Timestamped{
     @OrderBy("createdAt desc")
     private List<Comment> commentList;
 
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private int likeCount;
+
     public Board(String title, String contents, Users user) {
         this.title = title;
         this.contents = contents;
@@ -54,4 +59,13 @@ public class Board extends Timestamped{
     }
 
     public void addComment(List<Comment> commentList){ this.commentList = commentList; }
+
+    public void addLike() {
+        likeCount += 1;
+    }
+
+    public void cancelLike() {
+        if (likeCount - 1 < 0) return;
+        likeCount -= 1;
+    }
 }

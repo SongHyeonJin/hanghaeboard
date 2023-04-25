@@ -3,12 +3,17 @@ package com.sparta.hanghaememo.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sparta.hanghaememo.dto.comment.CommentRequestDto;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +22,17 @@ public class Comment extends Timestamped{
 
     @Column(nullable = false)
     private String contents;
+
+    @ManyToOne
+    @JoinColumn(name = "parentId")
+    private Comment parent;
+
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    private List<Comment> children = new ArrayList<>();
+
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private int likeCount;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,9 +43,7 @@ public class Comment extends Timestamped{
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    public Comment(Users user, Board board, CommentRequestDto commentRequestDto){
-        this.user = user;
-        this.board = board;
+    public Comment(CommentRequestDto commentRequestDto){
         this.contents =commentRequestDto.getContents();
     }
 
@@ -37,4 +51,24 @@ public class Comment extends Timestamped{
         this.contents=commentRequestDto.getContents();
     }
 
+    public void setUser(Users user) {
+        this.user = user;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    public void addLike() {
+        likeCount += 1;
+    }
+
+    public void cancelLike() {
+        if (likeCount - 1 < 0) return;
+        likeCount -= 1;
+    }
+
+    public void updateParent(Comment parent){
+        this.parent = parent;
+    }
 }
