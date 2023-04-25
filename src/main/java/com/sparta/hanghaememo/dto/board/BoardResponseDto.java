@@ -1,5 +1,6 @@
 package com.sparta.hanghaememo.dto.board;
 
+import com.sparta.hanghaememo.dto.comment.CommentResponseDto;
 import com.sparta.hanghaememo.entity.Board;
 import com.sparta.hanghaememo.entity.Comment;
 import com.sparta.hanghaememo.entity.Users;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -19,7 +21,7 @@ public class BoardResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private Users user;
-    private List<Comment> commentList;
+    private List<CommentResponseDto> commentList;
 
     public BoardResponseDto(Board board) {
         this.id = board.getId();
@@ -28,7 +30,7 @@ public class BoardResponseDto {
         this.likeCount = board.getLikeCount();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
-        this.commentList = board.getCommentList();
+        this.commentList = board.getCommentList().stream().map(CommentResponseDto::new).collect(Collectors.toList());
         this.user = board.getUser();
     }
 }
